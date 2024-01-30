@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.cft.template.model.RegisterBody;
 import ru.cft.template.model.TokenResponse;
-import ru.cft.template.service.UserService;
+import ru.cft.template.service.impl.UserService;
 
 @RestController
 @RequestMapping("api/users")
@@ -18,7 +18,7 @@ public class UserController {
 
     @PostMapping("register")
     public ResponseEntity<TokenResponse> registerUser(@RequestBody RegisterBody body){
-        return ResponseEntity.ok(userService.registerUser());
+        return ResponseEntity.ok(userService.registerUser(body));
     }
 
 }
