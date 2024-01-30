@@ -13,3 +13,7 @@ spring:
         enabled: true
         locations:
           - db.migration
+
+springdoc:
+    swagger-ui:
+        enabled: true
