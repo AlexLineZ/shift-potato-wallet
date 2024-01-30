@@ -20,5 +20,4 @@ public class UserController {
     public ResponseEntity<TokenResponse> registerUser(@RequestBody RegisterBody body){
         return ResponseEntity.ok(userService.registerUser(body));
     }
-
 }
