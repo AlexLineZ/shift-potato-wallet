@@ -30,6 +30,7 @@ public class SecurityConfig {
     private final UserService userService;
     private final JwtRequestFilter jwtRequestFilter;
 
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
