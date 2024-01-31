@@ -8,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import ru.cft.template.entity.User;
@@ -48,19 +49,9 @@ public class JwtTokenUtils {
                 .compact();
     }
 
-    public User getUserFromToken(String token) {
-        var userId = getAllClaimsFromToken(token).get("userId", String.class);
-        return userRepository.findById(UUID.fromString(userId)).orElseThrow();
-    }
-
     public UUID getUserIdFromToken(String token){
-        var userId = getAllClaimsFromToken(token).get("userId", String.class);
+        String userId = getAllClaimsFromToken(token).get("userId", String.class);
         return UUID.fromString(userId);
-    }
-
-    public boolean isTokenExpired(String token) {
-        Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
     }
 
     private SecretKey getSignKey() {
@@ -69,15 +60,12 @@ public class JwtTokenUtils {
     }
 
     public UUID getUserIdFromAuthentication(Authentication authentication) {
-        if (authentication instanceof JwtAuthenticationToken jwtToken) {
-            String userIdStr = jwtToken.getTokenAttributes().get("userId").toString();
-            return UUID.fromString(userIdStr);
+        if (authentication.getPrincipal() instanceof UserDetails userDetails) {
+            if (userDetails instanceof User) {
+                return ((User) userDetails).getId();
+            }
         }
-        throw new IllegalStateException("Authentication token is not JWT");
-    }
-
-    private Date getExpirationDateFromToken(String token) {
-        return getAllClaimsFromToken(token).getExpiration();
+        throw new IllegalStateException("Cannot extract user ID from Authentication object");
     }
 
     private Claims getAllClaimsFromToken(String token) {

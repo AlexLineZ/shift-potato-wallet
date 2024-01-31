@@ -2,8 +2,8 @@ server:
     port: 8080
 
 jwt:
-    secret: 984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
-    lifetime: 10m
+    secret: r1Wq3Y7Ql8ivrpC4A6vEgBg1kllCKCrFkwhbZUNZ6Y8=
+    lifetime: 30m
 
 spring:
     datasource:
