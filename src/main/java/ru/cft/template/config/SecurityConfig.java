@@ -36,7 +36,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(c -> c.requestMatchers("/api/users/logout").authenticated())
+                .authorizeHttpRequests(c -> c.requestMatchers("/api/users/update").authenticated())
+                .authorizeHttpRequests(c -> c.requestMatchers("/api/users/profile").authenticated())
                 .authorizeHttpRequests(c -> c.anyRequest().permitAll())
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))

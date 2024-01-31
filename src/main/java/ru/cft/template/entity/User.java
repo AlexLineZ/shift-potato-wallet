@@ -19,8 +19,7 @@ public class User implements UserDetails{
     private UUID Id;
 
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID walletId;
+    private UUID walletId = UUID.randomUUID();
 
     @Size(min = 1, max = 100, message = "Name must be at least 1 character and no more than 100")
     @NotBlank(message = "User firstname cannot be empty")

@@ -3,12 +3,17 @@ package ru.cft.template.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import ru.cft.template.entity.User;
 import ru.cft.template.repository.UserRepository;
 
+import javax.crypto.SecretKey;
 import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,7 +44,7 @@ public class JwtTokenUtils {
                 .claim("userId", user.getId().toString())
                 .setIssuedAt(issuedDate)
                 .setExpiration(expiredDate)
-                .signWith(SignatureAlgorithm.ES256, secret)
+                .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -48,9 +53,27 @@ public class JwtTokenUtils {
         return userRepository.findById(UUID.fromString(userId)).orElseThrow();
     }
 
+    public UUID getUserIdFromToken(String token){
+        var userId = getAllClaimsFromToken(token).get("userId", String.class);
+        return UUID.fromString(userId);
+    }
+
     public boolean isTokenExpired(String token) {
         Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
+    }
+
+    private SecretKey getSignKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public UUID getUserIdFromAuthentication(Authentication authentication) {
+        if (authentication instanceof JwtAuthenticationToken jwtToken) {
+            String userIdStr = jwtToken.getTokenAttributes().get("userId").toString();
+            return UUID.fromString(userIdStr);
+        }
+        throw new IllegalStateException("Authentication token is not JWT");
     }
 
     private Date getExpirationDateFromToken(String token) {
@@ -59,7 +82,7 @@ public class JwtTokenUtils {
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(secret)
+                .setSigningKey(getSignKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
