@@ -111,6 +111,8 @@ public class TransactionService {
 
 
 
+
+
     private void GetValidTransaction(TransferBody request, Wallet senderWallet, Transaction transaction) {
         if (!isValidTransaction(request)){
             transaction.setStatus(TransactionStatus.FAILED);
