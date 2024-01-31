@@ -4,15 +4,20 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import ru.cft.template.entity.Maintenance;
 import ru.cft.template.entity.Transaction;
 import ru.cft.template.entity.User;
 import ru.cft.template.entity.Wallet;
 import ru.cft.template.exception.BadTransactionException;
+import ru.cft.template.exception.WalletNotFoundException;
+import ru.cft.template.model.MaintenanceStatus;
+import ru.cft.template.model.MaintenanceType;
 import ru.cft.template.model.TransactionStatus;
 import ru.cft.template.model.TransactionType;
 import ru.cft.template.model.request.MaintenanceBody;
 import ru.cft.template.model.request.TransferBody;
 import ru.cft.template.model.response.CreatedMaintenanceResponse;
+import ru.cft.template.repository.MaintenanceRepository;
 import ru.cft.template.repository.TransactionRepository;
 import ru.cft.template.repository.UserRepository;
 import ru.cft.template.repository.WalletRepository;
@@ -27,6 +32,7 @@ public class TransactionService {
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
     private final WalletRepository walletRepository;
+    private final MaintenanceRepository maintenanceRepository;
 
     @Transactional
     public Transaction processTransaction(Authentication authentication, TransferBody request) {
@@ -43,8 +49,6 @@ public class TransactionService {
         if (request.receiverPhone() != null) {
             transaction.setType(TransactionType.TRANSFER);
             GetValidTransaction(request, senderWallet, transaction);
-
-            transaction.setReceiverPhone(request.receiverPhone());
 
             Wallet receiverWallet = findWalletByPhone(request.receiverPhone());
             if (receiverWallet == null) {
@@ -67,6 +71,7 @@ public class TransactionService {
             throw new BadTransactionException("Invalid transaction request");
         }
 
+        transaction.setSenderWallet(senderWallet);
         senderWallet.setAmount(senderWallet.getAmount() - request.amount());
         walletRepository.save(senderWallet);
         transaction.setStatus(TransactionStatus.SUCCESSFUL);
@@ -76,17 +81,33 @@ public class TransactionService {
 
 
     public CreatedMaintenanceResponse createMaintenance(Authentication authentication, MaintenanceBody body){
+        User user = userService.getUserById(authentication);
+        Wallet senderWallet = user.getWallet();
+        if (senderWallet == null) {
+            throw new WalletNotFoundException("Sender wallet not found");
+        }
 
+        Wallet receiverWallet = findWalletByPhone(body.phone());
+        if (receiverWallet == null) {
+            throw new WalletNotFoundException("Receiver wallet not found");
+        }
+
+        Maintenance maintenance = new Maintenance();
+        maintenance.setSenderWallet(senderWallet);
+        maintenance.setMaintenanceNumber(System.currentTimeMillis());
+        maintenance.setReceiverWallet(receiverWallet);
+        maintenance.setAmount(body.amount());
+        maintenance.setStatus(MaintenanceStatus.UNPAID);
+        maintenance.setTransactionDate(new Date());
+        maintenance.setComment(body.comment());
+
+        maintenanceRepository.save(maintenance);
+        return new CreatedMaintenanceResponse(
+                maintenance.getId(),
+                maintenance.getMaintenanceNumber(),
+                maintenance.getStatus()
+        );
     }
-
-
-
-
-
-
-
-
-
 
 
 
