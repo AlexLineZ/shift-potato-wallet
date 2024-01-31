@@ -21,7 +21,6 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.cft.template.service.impl.UserService;
 
-
 //https://www.youtube.com/watch?v=NIv9TFTSIlg&ab_channel=%D0%90%D0%BB%D0%B5%D0%BA%D1%81%D0%B0%D0%BD%D0%B4%D1%80%D0%A4%D0%B8%D1%81%D1%83%D0%BD%D0%BE%D0%B2
 //материал для будущего
 @Configuration
@@ -36,9 +35,12 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(c -> c.requestMatchers("/api/users/update").authenticated())
-                .authorizeHttpRequests(c -> c.requestMatchers("/api/users/profile").authenticated())
-                .authorizeHttpRequests(c -> c.anyRequest().permitAll())
+                .authorizeHttpRequests(c -> c
+                        .requestMatchers("/api/users/update").authenticated()
+                        .requestMatchers("/api/users/profile").authenticated()
+                        .requestMatchers("/api/wallet/bill").authenticated()
+                        .anyRequest().permitAll()
+                )
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
