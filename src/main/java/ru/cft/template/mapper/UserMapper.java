@@ -19,7 +19,7 @@ public class UserMapper {
     public static UserResponse mapUserToResponse(User user) {
         return new UserResponse(
                 user.getId().toString(),
-                user.getWalletId().toString(),
+                user.getWallet().getId().toString(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getFirstName() + " " + user.getLastName(),

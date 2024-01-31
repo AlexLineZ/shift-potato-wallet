@@ -18,8 +18,9 @@ public class User implements UserDetails{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID Id;
 
-    @Column(nullable = false)
-    private UUID walletId = UUID.randomUUID();
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "wallet_id", referencedColumnName = "id")
+    private Wallet wallet;
 
     @Size(min = 1, max = 100, message = "Name must be at least 1 character and no more than 100")
     @NotBlank(message = "User firstname cannot be empty")
@@ -45,7 +46,7 @@ public class User implements UserDetails{
     private Date registrationDate = new Date();
 
     @Column
-    private Date lastUpdateDate;
+    private Date lastUpdateDate = new Date();
 
     @Column(unique = true)
     @Size(min = 5, max = 10, message = "Email must be at least 5 character and no more than 10")
