@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.cft.template.entity.User;
 import ru.cft.template.entity.Wallet;
+import ru.cft.template.exception.BadTransactionException;
 import ru.cft.template.mapper.WalletMapper;
 import ru.cft.template.model.response.WalletResponse;
 import ru.cft.template.repository.UserRepository;

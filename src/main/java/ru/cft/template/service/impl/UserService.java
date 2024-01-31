@@ -37,13 +37,21 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public UserResponse getUserById(Authentication authentication) {
+    public UserResponse getUserResponseById(Authentication authentication) {
         UUID id = jwtTokenUtils.getUserIdFromAuthentication(authentication);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User with ID: " + id + " not found"));
 
         return UserMapper.mapUserToResponse(user);
     }
+
+    public User getUserById(Authentication authentication) {
+        UUID id = jwtTokenUtils.getUserIdFromAuthentication(authentication);
+
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User with ID: " + id + " not found"));
+    }
+
 
     public UserResponse updateUser(Authentication authentication, UserUpdateBody body){
         UUID id = jwtTokenUtils.getUserIdFromAuthentication(authentication);

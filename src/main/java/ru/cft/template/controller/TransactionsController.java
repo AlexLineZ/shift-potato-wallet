@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api")
 @Data
-public class CashTransactionsController {
+public class TransactionsController {
 
 }

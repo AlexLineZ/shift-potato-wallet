@@ -1,6 +1,5 @@
 package ru.cft.template.controller;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,7 +23,7 @@ public class UserController {
 
     @GetMapping("profile")
     public ResponseEntity<UserResponse> getUser(Authentication authentication) {
-        return ResponseEntity.ok(userService.getUserById(authentication));
+        return ResponseEntity.ok(userService.getUserResponseById(authentication));
     }
 
     @PatchMapping("update")
