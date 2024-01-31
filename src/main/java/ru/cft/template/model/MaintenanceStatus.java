@@ -1,5 +1,5 @@
 package ru.cft.template.model;
 
-public enum BillStatus {
+public enum MaintenanceStatus {
     PAID, UNPAID
 }

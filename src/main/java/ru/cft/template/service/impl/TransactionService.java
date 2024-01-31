@@ -10,7 +10,9 @@ import ru.cft.template.entity.Wallet;
 import ru.cft.template.exception.BadTransactionException;
 import ru.cft.template.model.TransactionStatus;
 import ru.cft.template.model.TransactionType;
+import ru.cft.template.model.request.MaintenanceBody;
 import ru.cft.template.model.request.TransferBody;
+import ru.cft.template.model.response.CreatedMaintenanceResponse;
 import ru.cft.template.repository.TransactionRepository;
 import ru.cft.template.repository.UserRepository;
 import ru.cft.template.repository.WalletRepository;
@@ -36,7 +38,7 @@ public class TransactionService {
         transaction.setAmount(request.amount());
         transaction.setTransactionDate(new Date());
         transaction.setStatus(TransactionStatus.PENDING);
-        transaction.setWallet(senderWallet);
+        transaction.setSenderWallet(senderWallet);
 
         if (request.receiverPhone() != null) {
             transaction.setType(TransactionType.TRANSFER);
@@ -47,7 +49,11 @@ public class TransactionService {
             Wallet receiverWallet = findWalletByPhone(request.receiverPhone());
             if (receiverWallet == null) {
                 throw new BadTransactionException("Receiver wallet not found");
+            } else {
+                receiverWallet.setAmount(receiverWallet.getAmount() + request.amount());
             }
+
+            walletRepository.save(receiverWallet);
 
         } else if (request.maintenanceNumber() != null) {
             transaction.setType(TransactionType.PAYMENT);
@@ -69,7 +75,9 @@ public class TransactionService {
     }
 
 
+    public CreatedMaintenanceResponse createMaintenance(Authentication authentication, MaintenanceBody body){
 
+    }
 
 
 

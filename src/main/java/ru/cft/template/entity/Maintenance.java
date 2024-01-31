@@ -1,38 +1,34 @@
 package ru.cft.template.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import ru.cft.template.model.TransactionStatus;
-import ru.cft.template.model.TransactionType;
+import ru.cft.template.model.MaintenanceStatus;
+import ru.cft.template.model.MaintenanceType;
 
 import java.util.Date;
 import java.util.UUID;
 
-@Entity
-@Table(name = "transactions")
-@Data
-public class Transaction {
+public class Maintenance {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private UUID id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MaintenanceType type;
 
     @Column(nullable = false)
     private Long amount;
 
     @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date transactionDate;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TransactionType type;
-
-    @Column
     private Long maintenanceNumber;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private TransactionStatus status;
+    @Column(nullable = false)
+    private MaintenanceStatus status;
+
+    @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
+    private Date transactionDate;
 
     @ManyToOne
     @JoinColumn(name = "sender_wallet_id", referencedColumnName = "id")
