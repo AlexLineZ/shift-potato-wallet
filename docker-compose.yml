@@ -32,7 +32,7 @@ services:
       interval: 10s
       retries: 5
       start_period: 15s
-      timeout: 10s
+      timeout: 0910s
   tests:
     image: wil124/shift-intensiv-winter-2024-tests
     pull_policy: always
