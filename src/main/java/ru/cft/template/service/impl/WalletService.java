@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.cft.template.entity.User;
 import ru.cft.template.entity.Wallet;
 import ru.cft.template.mapper.WalletMapper;
-import ru.cft.template.model.WalletResponse;
+import ru.cft.template.model.response.WalletResponse;
 import ru.cft.template.repository.UserRepository;
 import ru.cft.template.repository.WalletRepository;
 import ru.cft.template.utils.JwtTokenUtils;

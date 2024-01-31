@@ -1,7 +1,7 @@
 package ru.cft.template.mapper;
 
 import ru.cft.template.entity.Wallet;
-import ru.cft.template.model.WalletResponse;
+import ru.cft.template.model.response.WalletResponse;
 
 public class WalletMapper {
     public static WalletResponse mapWalletToResponse(Wallet wallet){

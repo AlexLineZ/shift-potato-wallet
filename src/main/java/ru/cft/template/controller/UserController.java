@@ -3,15 +3,12 @@ package ru.cft.template.controller;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.cft.template.model.RegisterBody;
-import ru.cft.template.model.TokenResponse;
-import ru.cft.template.model.UserResponse;
-import ru.cft.template.model.UserUpdateBody;
+import ru.cft.template.model.request.RegisterBody;
+import ru.cft.template.model.response.TokenResponse;
+import ru.cft.template.model.response.UserResponse;
+import ru.cft.template.model.request.UserUpdateBody;
 import ru.cft.template.service.impl.UserService;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("api/users")

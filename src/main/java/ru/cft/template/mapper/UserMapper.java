@@ -1,8 +1,8 @@
 package ru.cft.template.mapper;
 
 import ru.cft.template.entity.User;
-import ru.cft.template.model.RegisterBody;
-import ru.cft.template.model.UserResponse;
+import ru.cft.template.model.request.RegisterBody;
+import ru.cft.template.model.response.UserResponse;
 
 public class UserMapper {
     public static User mapRegisterBodyToUser(RegisterBody body) {

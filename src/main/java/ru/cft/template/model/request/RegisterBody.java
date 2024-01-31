@@ -1,4 +1,4 @@
-package ru.cft.template.model;
+package ru.cft.template.model.request;
 
 public record RegisterBody(
         Long phone,

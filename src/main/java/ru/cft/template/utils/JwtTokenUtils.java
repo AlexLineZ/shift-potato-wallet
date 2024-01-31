@@ -25,8 +25,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class JwtTokenUtils {
 
-    private final UserRepository userRepository;
-
     @Value("${jwt.secret}")
     private String secret;
 

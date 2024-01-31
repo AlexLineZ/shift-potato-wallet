@@ -9,12 +9,11 @@ import org.springframework.stereotype.Service;
 import ru.cft.template.entity.User;
 import ru.cft.template.entity.Wallet;
 import ru.cft.template.mapper.UserMapper;
-import ru.cft.template.model.RegisterBody;
-import ru.cft.template.model.TokenResponse;
-import ru.cft.template.model.UserResponse;
-import ru.cft.template.model.UserUpdateBody;
+import ru.cft.template.model.request.RegisterBody;
+import ru.cft.template.model.response.TokenResponse;
+import ru.cft.template.model.response.UserResponse;
+import ru.cft.template.model.request.UserUpdateBody;
 import ru.cft.template.repository.UserRepository;
-import ru.cft.template.repository.WalletRepository;
 import ru.cft.template.utils.JwtTokenUtils;
 
 import java.util.UUID;

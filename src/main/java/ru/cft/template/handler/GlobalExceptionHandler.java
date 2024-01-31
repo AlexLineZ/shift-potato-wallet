@@ -11,7 +11,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<Object> handleGenericException(UsernameNotFoundException ex) {
+    public ResponseEntity<Object> handleIllegalStateException(IllegalStateException ex) {
+        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<Object> handleUserNotFoundException(UsernameNotFoundException ex) {
         return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
