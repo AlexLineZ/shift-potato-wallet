@@ -1,5 +1,6 @@
 package ru.cft.template.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -9,7 +10,9 @@ import ru.cft.template.entity.Transaction;
 import ru.cft.template.entity.User;
 import ru.cft.template.entity.Wallet;
 import ru.cft.template.exception.BadTransactionException;
+import ru.cft.template.exception.InsufficientFundsException;
 import ru.cft.template.exception.WalletNotFoundException;
+import ru.cft.template.mapper.MaintenanceMapper;
 import ru.cft.template.model.MaintenanceStatus;
 import ru.cft.template.model.MaintenanceType;
 import ru.cft.template.model.TransactionStatus;
@@ -17,12 +20,16 @@ import ru.cft.template.model.TransactionType;
 import ru.cft.template.model.request.MaintenanceBody;
 import ru.cft.template.model.request.TransferBody;
 import ru.cft.template.model.response.CreatedMaintenanceResponse;
+import ru.cft.template.model.response.MaintenanceInfoResponse;
 import ru.cft.template.repository.MaintenanceRepository;
 import ru.cft.template.repository.TransactionRepository;
 import ru.cft.template.repository.UserRepository;
 import ru.cft.template.repository.WalletRepository;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -46,16 +53,15 @@ public class TransactionService {
         transaction.setStatus(TransactionStatus.PENDING);
         transaction.setSenderWallet(senderWallet);
 
+        Wallet receiverWallet = findWalletByPhone(request.receiverPhone());
+        if (receiverWallet == null) {
+            throw new BadTransactionException("Receiver wallet not found");
+        }
+        transaction.setReceiverWallet(receiverWallet);
+
         if (request.receiverPhone() != null) {
             transaction.setType(TransactionType.TRANSFER);
             GetValidTransaction(request, senderWallet, transaction);
-
-            Wallet receiverWallet = findWalletByPhone(request.receiverPhone());
-            if (receiverWallet == null) {
-                throw new BadTransactionException("Receiver wallet not found");
-            } else {
-                receiverWallet.setAmount(receiverWallet.getAmount() + request.amount());
-            }
 
             walletRepository.save(receiverWallet);
 
@@ -63,17 +69,36 @@ public class TransactionService {
             transaction.setType(TransactionType.PAYMENT);
             GetValidTransaction(request, senderWallet, transaction);
 
-            transaction.setMaintenanceNumber(request.maintenanceNumber());
+            Optional<Maintenance> maintenanceOptional = maintenanceRepository
+                    .findByMaintenanceNumber(request.maintenanceNumber());
 
-            //нужно сделать счета
+            if (maintenanceOptional.isPresent()) {
+                Maintenance maintenance = maintenanceOptional.get();
+                if (maintenance.getStatus() == MaintenanceStatus.PAID) {
+                    throw new IllegalStateException("This maintenance is already paid");
+                }
+                if (senderWallet.getAmount() < maintenance.getAmount()) {
+                    transaction.setStatus(TransactionStatus.FAILED);
+                    transactionRepository.save(transaction);
+                    throw new InsufficientFundsException("Insufficient funds for payment");
+                }
+                maintenance.setStatus(MaintenanceStatus.PAID);
+            } else {
+                throw new EntityNotFoundException("Maintenance not found");
+            }
+
+            transaction.setMaintenanceNumber(request.maintenanceNumber());
 
         } else {
             throw new BadTransactionException("Invalid transaction request");
         }
 
-        transaction.setSenderWallet(senderWallet);
+        receiverWallet.setAmount(receiverWallet.getAmount() + request.amount());
         senderWallet.setAmount(senderWallet.getAmount() - request.amount());
+
         walletRepository.save(senderWallet);
+        walletRepository.save(receiverWallet);
+
         transaction.setStatus(TransactionStatus.SUCCESSFUL);
         transactionRepository.save(transaction);
         return transaction;
@@ -109,6 +134,29 @@ public class TransactionService {
         );
     }
 
+    public List<MaintenanceInfoResponse> getUserMaintenances(Authentication authentication, MaintenanceType type) {
+        User user = userService.getUserById(authentication);
+        Wallet userWallet = user.getWallet();
+
+        List<Maintenance> maintenances;
+        if (type == null) {
+            maintenances = maintenanceRepository.findBySenderWalletOrReceiverWallet(userWallet, userWallet);
+        } else {
+            maintenances = switch (type) {
+                case INBOUND -> maintenanceRepository.findByReceiverWallet(userWallet);
+                case OUTBOUND -> maintenanceRepository.findBySenderWallet(userWallet);
+                default -> throw new IllegalArgumentException("Unexpected value: " + type);
+            };
+        }
+
+        return maintenances.stream()
+                .map(maintenance -> {
+                    MaintenanceType responseType = maintenance.getSenderWallet().equals(userWallet)
+                            ? MaintenanceType.OUTBOUND
+                            : MaintenanceType.INBOUND;
+                    return MaintenanceMapper.mapMaintenanceToResponse(maintenance, responseType);
+                }).collect(Collectors.toList());
+    }
 
 
 

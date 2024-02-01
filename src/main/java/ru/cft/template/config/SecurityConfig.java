@@ -40,6 +40,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/update").authenticated()
                         .requestMatchers("/api/users/profile").authenticated()
                         .requestMatchers("/api/wallet/bill").authenticated()
+                        .requestMatchers("/api/history").authenticated()
+                        .requestMatchers("/api/transfers").authenticated()
+                        .requestMatchers("/api/maintenance").authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -66,6 +69,5 @@ public class SecurityConfig {
             AuthenticationConfiguration authenticationConfiguration
     ) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-
     }
 }
