@@ -13,14 +13,14 @@ import ru.cft.template.exception.BadTransactionException;
 import ru.cft.template.exception.InsufficientFundsException;
 import ru.cft.template.exception.WalletNotFoundException;
 import ru.cft.template.mapper.MaintenanceMapper;
+import ru.cft.template.mapper.TransactionMapper;
 import ru.cft.template.model.MaintenanceStatus;
 import ru.cft.template.model.MaintenanceType;
 import ru.cft.template.model.TransactionStatus;
 import ru.cft.template.model.TransactionType;
 import ru.cft.template.model.request.MaintenanceBody;
 import ru.cft.template.model.request.TransferBody;
-import ru.cft.template.model.response.CreatedMaintenanceResponse;
-import ru.cft.template.model.response.MaintenanceInfoResponse;
+import ru.cft.template.model.response.*;
 import ru.cft.template.repository.MaintenanceRepository;
 import ru.cft.template.repository.TransactionRepository;
 import ru.cft.template.repository.UserRepository;
@@ -41,8 +41,26 @@ public class TransactionService {
     private final WalletRepository walletRepository;
     private final MaintenanceRepository maintenanceRepository;
 
+    public List<TransactionHistoryResponse> getHistory(Authentication authentication, TransactionType type) {
+        User user = userService.getUserById(authentication);
+        Wallet userWallet = user.getWallet();
+
+        List<Transaction> transactions;
+        if (type == null) {
+            transactions = transactionRepository.findBySenderWallet(userWallet);
+        } else {
+            transactions = transactionRepository.findBySenderWalletAndType(userWallet, type);
+        }
+
+        return transactions.stream()
+                .map(TransactionMapper::mapTransactionToHistory)
+                .collect(Collectors.toList());
+    }
+
+
+
     @Transactional
-    public Transaction processTransaction(Authentication authentication, TransferBody request) {
+    public TransactionResponse processTransaction(Authentication authentication, TransferBody request) {
         User user = userService.getUserById(authentication);
         Wallet senderWallet = user.getWallet();
 
@@ -61,6 +79,7 @@ public class TransactionService {
 
         if (request.receiverPhone() != null) {
             transaction.setType(TransactionType.TRANSFER);
+            transaction.setReceiverPhone(request.receiverPhone());
             GetValidTransaction(request, senderWallet, transaction);
 
             walletRepository.save(receiverWallet);
@@ -101,7 +120,18 @@ public class TransactionService {
 
         transaction.setStatus(TransactionStatus.SUCCESSFUL);
         transactionRepository.save(transaction);
-        return transaction;
+
+
+        WalletShortResponse wallet = new WalletShortResponse(
+                senderWallet.getId(),
+                senderWallet.getAmount()
+        );
+
+        return new TransactionResponse(
+                transaction.getId(),
+                user.getId(),
+                wallet
+        );
     }
 
 
@@ -157,9 +187,6 @@ public class TransactionService {
                     return MaintenanceMapper.mapMaintenanceToResponse(maintenance, responseType);
                 }).collect(Collectors.toList());
     }
-
-
-
 
     private void GetValidTransaction(TransferBody request, Wallet senderWallet, Transaction transaction) {
         if (!isValidTransaction(request)){

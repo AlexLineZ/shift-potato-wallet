@@ -4,6 +4,7 @@ CREATE TABLE transactions (
       transaction_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       type VARCHAR(255) NOT NULL,
       maintenance_number BIGINT,
+      receiver_phone BIGINT,
       status VARCHAR(255) NOT NULL,
       sender_wallet_id UUID,
       receiver_wallet_id UUID,

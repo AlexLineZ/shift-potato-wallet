@@ -28,6 +28,9 @@ public class Transaction {
     private TransactionType type;
 
     @Column
+    private Long receiverPhone;
+
+    @Column
     private Long maintenanceNumber;
 
     @Column(nullable = false)

@@ -6,10 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.cft.template.model.MaintenanceType;
+import ru.cft.template.model.TransactionType;
 import ru.cft.template.model.request.MaintenanceBody;
 import ru.cft.template.model.request.TransferBody;
 import ru.cft.template.model.response.CreatedMaintenanceResponse;
 import ru.cft.template.model.response.MaintenanceInfoResponse;
+import ru.cft.template.model.response.TransactionHistoryResponse;
+import ru.cft.template.model.response.TransactionResponse;
 import ru.cft.template.service.impl.TransactionService;
 
 import java.util.List;
@@ -21,12 +24,18 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @GetMapping("/history")
-    public String getHistory(){
-        return "Ok";
+    public ResponseEntity<List<TransactionHistoryResponse>> getHistory(
+            Authentication authentication,
+            @RequestParam(required = false) TransactionType type
+    ){
+        return ResponseEntity.ok(transactionService.getHistory(authentication, type));
     }
 
     @PostMapping("/transfers")
-    public ResponseEntity<?> createTransfer(Authentication authentication, @RequestBody TransferBody body){
+    public ResponseEntity<TransactionResponse> createTransfer(
+            Authentication authentication,
+            @RequestBody TransferBody body
+    ){
         return ResponseEntity.ok(transactionService.processTransaction(authentication, body));
     }
 
