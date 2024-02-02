@@ -9,6 +9,7 @@ import ru.cft.template.entity.Maintenance;
 import ru.cft.template.entity.Transaction;
 import ru.cft.template.entity.User;
 import ru.cft.template.entity.Wallet;
+import ru.cft.template.exception.AccessRightsException;
 import ru.cft.template.exception.BadTransactionException;
 import ru.cft.template.exception.InsufficientFundsException;
 import ru.cft.template.exception.WalletNotFoundException;
@@ -57,8 +58,6 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
 
-
-
     @Transactional
     public TransactionResponse processTransaction(Authentication authentication, TransferBody request) {
         User user = userService.getUserById(authentication);
@@ -71,17 +70,18 @@ public class TransactionService {
         transaction.setStatus(TransactionStatus.PENDING);
         transaction.setSenderWallet(senderWallet);
 
-        Wallet receiverWallet = findWalletByPhone(request.receiverPhone());
-        if (receiverWallet == null) {
-            throw new BadTransactionException("Receiver wallet not found");
-        }
-        transaction.setReceiverWallet(receiverWallet);
 
         if (request.receiverPhone() != null) {
             transaction.setType(TransactionType.TRANSFER);
-            transaction.setReceiverPhone(request.receiverPhone());
+            Wallet receiverWallet = findWalletByPhone(request.receiverPhone());
+
+            if (receiverWallet == null) {
+                throw new BadTransactionException("Receiver wallet not found");
+            }
+
             GetValidTransaction(request, senderWallet, transaction);
 
+            receiverWallet.setAmount(receiverWallet.getAmount() + request.amount());
             walletRepository.save(receiverWallet);
 
         } else if (request.maintenanceNumber() != null) {
@@ -101,6 +101,15 @@ public class TransactionService {
                     transactionRepository.save(transaction);
                     throw new InsufficientFundsException("Insufficient funds for payment");
                 }
+                Wallet receiverWallet = maintenance.getReceiverWallet();
+
+                if (maintenance.getSenderWallet() == senderWallet || maintenance.getReceiverWallet() != senderWallet){
+                    throw new AccessRightsException("You are not authorized to pay this maintenance");
+                }
+
+                receiverWallet.setAmount(receiverWallet.getAmount() + request.amount());
+                walletRepository.save(receiverWallet);
+
                 maintenance.setStatus(MaintenanceStatus.PAID);
             } else {
                 throw new EntityNotFoundException("Maintenance not found");
@@ -112,15 +121,11 @@ public class TransactionService {
             throw new BadTransactionException("Invalid transaction request");
         }
 
-        receiverWallet.setAmount(receiverWallet.getAmount() + request.amount());
         senderWallet.setAmount(senderWallet.getAmount() - request.amount());
-
         walletRepository.save(senderWallet);
-        walletRepository.save(receiverWallet);
 
         transaction.setStatus(TransactionStatus.SUCCESSFUL);
         transactionRepository.save(transaction);
-
 
         WalletShortResponse wallet = new WalletShortResponse(
                 senderWallet.getId(),

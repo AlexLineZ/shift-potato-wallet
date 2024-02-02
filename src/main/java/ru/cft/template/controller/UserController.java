@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.cft.template.model.request.LoginBody;
 import ru.cft.template.model.request.RegisterBody;
 import ru.cft.template.model.response.TokenResponse;
 import ru.cft.template.model.response.UserResponse;
@@ -15,6 +16,11 @@ import ru.cft.template.service.impl.UserService;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
+    @GetMapping("login")
+    public ResponseEntity<TokenResponse> loginUser(@RequestBody LoginBody body){
+        return ResponseEntity.ok(userService.loginUser(body));
+    }
 
     @PostMapping("register")
     public ResponseEntity<TokenResponse> registerUser(@RequestBody RegisterBody body) {
