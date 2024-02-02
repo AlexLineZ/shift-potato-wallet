@@ -6,11 +6,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ru.cft.template.exception.AccessRightsException;
 import ru.cft.template.exception.BadTransactionException;
 import ru.cft.template.exception.WalletNotFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(value = AccessRightsException.class)
+    public ResponseEntity<Object> handleAccessRightException(AccessRightsException ex) {
+        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(value = WalletNotFoundException.class)
     public ResponseEntity<Object> handleWalletNotFoundException(WalletNotFoundException ex) {
         return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.NOT_FOUND);
