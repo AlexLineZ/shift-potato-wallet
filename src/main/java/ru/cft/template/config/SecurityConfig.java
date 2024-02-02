@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/history").authenticated()
                         .requestMatchers("/api/transfers").authenticated()
                         .requestMatchers("/api/maintenance").authenticated()
+                        .requestMatchers("/api/users/sessions/current").authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

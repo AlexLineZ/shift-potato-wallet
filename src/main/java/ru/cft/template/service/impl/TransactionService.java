@@ -152,6 +152,10 @@ public class TransactionService {
             throw new WalletNotFoundException("Receiver wallet not found");
         }
 
+        if (senderWallet == receiverWallet) {
+            throw new BadTransactionException("You can't bill yourself");
+        }
+
         Maintenance maintenance = new Maintenance();
         maintenance.setSenderWallet(senderWallet);
         maintenance.setMaintenanceNumber(System.currentTimeMillis());

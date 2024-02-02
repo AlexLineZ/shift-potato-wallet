@@ -17,11 +17,6 @@ import ru.cft.template.service.impl.UserService;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("login")
-    public ResponseEntity<TokenResponse> loginUser(@RequestBody LoginBody body){
-        return ResponseEntity.ok(userService.loginUser(body));
-    }
-
     @PostMapping("register")
     public ResponseEntity<TokenResponse> registerUser(@RequestBody RegisterBody body) {
         return ResponseEntity.ok(userService.registerUser(body));

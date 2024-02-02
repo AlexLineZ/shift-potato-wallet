@@ -33,20 +33,6 @@ public class UserService implements UserDetailsService {
     private final WalletService walletService;
     private final JwtTokenUtils jwtTokenUtils;
 
-    public TokenResponse loginUser(LoginBody body){
-        User user = userRepository.findByPhone(body.phone())
-                .filter(u -> Objects.equals(body.password(), u.getPassword()))
-                .orElse(null);
-
-        if (user == null){
-            throw new UsernameNotFoundException("Invalid login details");
-        }
-
-        return TokenResponse.builder()
-                .token(jwtTokenUtils.generateToken(user))
-                .build();
-    }
-
 
     public TokenResponse registerUser(RegisterBody body) {
         User user = UserMapper.mapRegisterBodyToUser(body);
