@@ -39,7 +39,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwt = null;
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
-            boolean isBanned = bannedTokenRepository.findById(jwt).isPresent();
+            boolean isBanned = bannedTokenRepository.findByToken(jwt).isPresent();
             if (isBanned) {
                 log.info("Attempt to use a banned token");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The token is banned");
