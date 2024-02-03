@@ -17,17 +17,18 @@ import ru.cft.template.repository.BannedTokenRepository;
 import ru.cft.template.repository.SessionRepository;
 import ru.cft.template.repository.UserRepository;
 import ru.cft.template.jwt.JwtTokenUtils;
+import ru.cft.template.service.SessionService;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class SessionService {
+public class SessionServiceImpl implements SessionService {
 
     private final UserRepository userRepository;
     private final JwtTokenUtils jwtTokenUtils;
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final SessionRepository sessionRepository;
     private final BannedTokenRepository bannedTokenRepository;
 

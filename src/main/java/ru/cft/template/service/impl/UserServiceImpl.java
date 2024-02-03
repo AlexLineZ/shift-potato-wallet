@@ -16,17 +16,17 @@ import ru.cft.template.model.response.UserResponse;
 import ru.cft.template.model.request.UserUpdateBody;
 import ru.cft.template.repository.UserRepository;
 import ru.cft.template.jwt.JwtTokenUtils;
+import ru.cft.template.service.WalletService;
 
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final WalletService walletService;
     private final JwtTokenUtils jwtTokenUtils;
-
 
     public TokenResponse registerUser(RegisterBody body) {
         User user = UserMapper.mapRegisterBodyToUser(body);

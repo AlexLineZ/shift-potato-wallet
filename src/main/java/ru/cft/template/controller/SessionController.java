@@ -1,15 +1,13 @@
 package ru.cft.template.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.cft.template.model.request.LoginBody;
 import ru.cft.template.model.response.CurrentSessionResponse;
 import ru.cft.template.model.response.SessionResponse;
-import ru.cft.template.model.response.TokenResponse;
-import ru.cft.template.service.impl.SessionService;
+import ru.cft.template.service.SessionService;
 
 import java.util.List;
 

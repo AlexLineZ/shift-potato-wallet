@@ -17,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.cft.template.jwt.JwtRequestFilter;
-import ru.cft.template.service.impl.UserService;
+import ru.cft.template.service.impl.UserServiceImpl;
 
 //https://www.youtube.com/watch?v=NIv9TFTSIlg&ab_channel=%D0%90%D0%BB%D0%B5%D0%BA%D1%81%D0%B0%D0%BD%D0%B4%D1%80%D0%A4%D0%B8%D1%81%D1%83%D0%BD%D0%BE%D0%B2
 //материал для будущего
@@ -25,7 +25,7 @@ import ru.cft.template.service.impl.UserService;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final JwtRequestFilter jwtRequestFilter;
 
 

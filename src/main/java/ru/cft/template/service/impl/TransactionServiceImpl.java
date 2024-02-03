@@ -26,8 +26,8 @@ import ru.cft.template.model.request.TransferBody;
 import ru.cft.template.model.response.*;
 import ru.cft.template.repository.MaintenanceRepository;
 import ru.cft.template.repository.TransactionRepository;
-import ru.cft.template.repository.UserRepository;
 import ru.cft.template.repository.WalletRepository;
+import ru.cft.template.service.TransactionService;
 
 import java.util.Date;
 import java.util.List;
@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class TransactionService {
-    private final UserService userService;
+public class TransactionServiceImpl implements TransactionService {
+    private final UserServiceImpl userService;
     private final TransactionRepository transactionRepository;
     private final WalletRepository walletRepository;
     private final MaintenanceRepository maintenanceRepository;
