@@ -9,6 +9,7 @@ import ru.cft.template.entity.BannedToken;
 import ru.cft.template.entity.Session;
 import ru.cft.template.entity.User;
 import ru.cft.template.exception.AccessRightsException;
+import ru.cft.template.exception.SessionNotFoundException;
 import ru.cft.template.mapper.SessionMapper;
 import ru.cft.template.model.request.LoginBody;
 import ru.cft.template.model.response.CurrentSessionResponse;
@@ -54,7 +55,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     public List<CurrentSessionResponse> getAllSessions(Authentication authentication){
-        User user = userService.getUserById(authentication);
+        User user = userService.getUserByAuthentication(authentication);
 
         List<Session> sessions = sessionRepository.findByUserId(user.getId());
         Date now = new Date();
@@ -63,7 +64,7 @@ public class SessionServiceImpl implements SessionService {
                     boolean isActive = session.getExpirationTime().after(now);
                     return SessionMapper.mapSessionToResponse(session, isActive);
                 })
-                .collect(Collectors.toList());
+                .toList();
 
     }
 
@@ -79,16 +80,16 @@ public class SessionServiceImpl implements SessionService {
                     jwtTokenUtils.getExpirationDateFromToken(currentToken).after(now)
             );
         } else {
-           throw new UsernameNotFoundException("Session not found");
+           throw new SessionNotFoundException("Session not found");
         }
     }
 
     public ResponseEntity<?> deleteSessionById(Authentication authentication, String id){
-        UUID currentUserId = userService.getUserById(authentication).getId();
+        UUID currentUserId = userService.getUserByAuthentication(authentication).getId();
         UUID sessionId = UUID.fromString(id);
 
         Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new RuntimeException("Session not found"));
+                .orElseThrow(() -> new SessionNotFoundException("Session not found"));
 
         if (!session.getUserId().equals(currentUserId)) {
            throw new AccessRightsException("You can only delete your own sessions");

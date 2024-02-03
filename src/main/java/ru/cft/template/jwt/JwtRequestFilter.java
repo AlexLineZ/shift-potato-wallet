@@ -15,7 +15,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import ru.cft.template.entity.User;
 import ru.cft.template.repository.BannedTokenRepository;
 import ru.cft.template.repository.UserRepository;
-import ru.cft.template.jwt.JwtTokenUtils;
 
 import java.io.IOException;
 import java.util.Collections;

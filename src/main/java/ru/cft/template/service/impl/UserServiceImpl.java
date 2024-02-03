@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserDetailsService {
                 .build();
     }
 
-    public UserResponse getUserResponseById(Authentication authentication) {
+    public UserResponse getUserResponseByAuthentication(Authentication authentication) {
         UUID id = jwtTokenUtils.getUserIdFromAuthentication(authentication);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User with ID: " + id + " not found"));
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserDetailsService {
         return UserMapper.mapUserToResponse(user);
     }
 
-    public User getUserById(Authentication authentication) {
+    public User getUserByAuthentication(Authentication authentication) {
         UUID id = jwtTokenUtils.getUserIdFromAuthentication(authentication);
 
         return userRepository.findById(id)
@@ -74,14 +74,14 @@ public class UserServiceImpl implements UserDetailsService {
         return UserMapper.mapUserToResponse(user);
     }
 
+    public User findUserByPhone(Long phone) {
+        return userRepository.findByPhone(phone)
+                .orElseThrow(() -> new BadTransactionException("User not found for the given phone number"));
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User with email: " + email + " not found"));
-    }
-
-    public User findUserByPhone(Long phone) {
-        return userRepository.findByPhone(phone)
-                .orElseThrow(() -> new BadTransactionException("User not found for the given phone number"));
     }
 }

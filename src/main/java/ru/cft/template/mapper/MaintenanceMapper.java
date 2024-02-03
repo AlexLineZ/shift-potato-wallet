@@ -2,7 +2,6 @@ package ru.cft.template.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.cft.template.entity.Maintenance;
-import ru.cft.template.model.MaintenanceStatus;
 import ru.cft.template.model.MaintenanceType;
 import ru.cft.template.model.response.MaintenanceInfoResponse;
 

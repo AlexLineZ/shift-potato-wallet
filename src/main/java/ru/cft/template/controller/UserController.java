@@ -5,9 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.cft.template.model.request.RegisterBody;
+import ru.cft.template.model.request.UserUpdateBody;
 import ru.cft.template.model.response.TokenResponse;
 import ru.cft.template.model.response.UserResponse;
-import ru.cft.template.model.request.UserUpdateBody;
 import ru.cft.template.service.impl.UserServiceImpl;
 
 @RestController
@@ -23,7 +23,7 @@ public class UserController {
 
     @GetMapping("profile")
     public ResponseEntity<UserResponse> getUser(Authentication authentication) {
-        return ResponseEntity.ok(userService.getUserResponseById(authentication));
+        return ResponseEntity.ok(userService.getUserResponseByAuthentication(authentication));
     }
 
     @PatchMapping("update")

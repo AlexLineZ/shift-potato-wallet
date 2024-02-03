@@ -3,7 +3,6 @@ package ru.cft.template.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import ru.cft.template.model.MaintenanceStatus;
-import ru.cft.template.model.MaintenanceType;
 
 import java.util.Date;
 import java.util.UUID;

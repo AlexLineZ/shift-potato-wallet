@@ -54,7 +54,7 @@ public class TransactionServiceImpl implements TransactionService {
             throw new BadTransactionException("A lot of money my friend");
         }
 
-        User user = userService.getUserById(authentication);
+        User user = userService.getUserByAuthentication(authentication);
         Wallet senderWallet = user.getWallet();
 
         List<Transaction> lastRefillTransactions = transactionRepository
@@ -98,7 +98,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private boolean shouldRefill(List<Transaction> transactions) {
         Random random = new Random();
-        if (transactions.size() == 4 && transactions.stream()
+        if (transactions.size() >= 3 && transactions.stream()
                 .filter(t -> TransactionStatus.FAILED.equals(t.getStatus())).count() >= 3) {
             return true;
         }
@@ -106,7 +106,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     public List<TransactionHistoryResponse> getHistory(Authentication authentication, TransactionType type) {
-        User user = userService.getUserById(authentication);
+        User user = userService.getUserByAuthentication(authentication);
         Wallet userWallet = user.getWallet();
 
         List<Transaction> transactions;
@@ -123,7 +123,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     public TransactionResponse processTransaction(Authentication authentication, TransferBody request) {
-        User user = userService.getUserById(authentication);
+        User user = userService.getUserByAuthentication(authentication);
         Wallet senderWallet = user.getWallet();
 
         Transaction transaction = new Transaction();
@@ -217,7 +217,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     public CreatedMaintenanceResponse createMaintenance(Authentication authentication, MaintenanceBody body){
-        User user = userService.getUserById(authentication);
+        User user = userService.getUserByAuthentication(authentication);
         Wallet senderWallet = user.getWallet();
         if (senderWallet == null) {
             throw new WalletNotFoundException("Sender wallet not found");
@@ -250,7 +250,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     public List<MaintenanceInfoResponse> getUserMaintenances(Authentication authentication, MaintenanceType type) {
-        User user = userService.getUserById(authentication);
+        User user = userService.getUserByAuthentication(authentication);
         Wallet userWallet = user.getWallet();
 
         List<Maintenance> maintenances;
