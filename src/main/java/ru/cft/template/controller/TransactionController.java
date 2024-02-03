@@ -7,12 +7,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.cft.template.model.MaintenanceType;
 import ru.cft.template.model.TransactionType;
+import ru.cft.template.model.request.AmountBody;
 import ru.cft.template.model.request.MaintenanceBody;
 import ru.cft.template.model.request.TransferBody;
-import ru.cft.template.model.response.CreatedMaintenanceResponse;
-import ru.cft.template.model.response.MaintenanceInfoResponse;
-import ru.cft.template.model.response.TransactionHistoryResponse;
-import ru.cft.template.model.response.TransactionResponse;
+import ru.cft.template.model.response.*;
 import ru.cft.template.service.impl.TransactionService;
 
 import java.util.List;
@@ -22,6 +20,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;
+
+    @PostMapping("/hesoyam")
+    public ResponseEntity<WalletShortResponse> hesoyam(Authentication authentication, @RequestBody AmountBody body){
+        return ResponseEntity.ok(transactionService.hesoyam(authentication, body));
+    }
 
     @GetMapping("/history")
     public ResponseEntity<List<TransactionHistoryResponse>> getHistory(

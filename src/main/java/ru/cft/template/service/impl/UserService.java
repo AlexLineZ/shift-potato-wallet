@@ -1,29 +1,23 @@
 package ru.cft.template.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.cft.template.entity.User;
 import ru.cft.template.entity.Wallet;
+import ru.cft.template.exception.BadTransactionException;
 import ru.cft.template.mapper.UserMapper;
-import ru.cft.template.model.request.LoginBody;
 import ru.cft.template.model.request.RegisterBody;
 import ru.cft.template.model.response.TokenResponse;
 import ru.cft.template.model.response.UserResponse;
 import ru.cft.template.model.request.UserUpdateBody;
 import ru.cft.template.repository.UserRepository;
-import ru.cft.template.utils.JwtTokenUtils;
+import ru.cft.template.jwt.JwtTokenUtils;
 
-import java.util.Objects;
 import java.util.UUID;
-
-import static java.util.regex.Pattern.matches;
 
 @Service
 @RequiredArgsConstructor
@@ -84,5 +78,10 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User with email: " + email + " not found"));
+    }
+
+    public User findUserByPhone(Long phone) {
+        return userRepository.findByPhone(phone)
+                .orElseThrow(() -> new BadTransactionException("User not found for the given phone number"));
     }
 }

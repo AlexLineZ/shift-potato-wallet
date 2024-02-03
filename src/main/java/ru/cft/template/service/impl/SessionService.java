@@ -1,7 +1,6 @@
 package ru.cft.template.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,7 +16,7 @@ import ru.cft.template.model.response.SessionResponse;
 import ru.cft.template.repository.BannedTokenRepository;
 import ru.cft.template.repository.SessionRepository;
 import ru.cft.template.repository.UserRepository;
-import ru.cft.template.utils.JwtTokenUtils;
+import ru.cft.template.jwt.JwtTokenUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;

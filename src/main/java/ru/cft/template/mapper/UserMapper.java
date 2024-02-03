@@ -1,9 +1,11 @@
 package ru.cft.template.mapper;
 
+import org.springframework.stereotype.Component;
 import ru.cft.template.entity.User;
 import ru.cft.template.model.request.RegisterBody;
 import ru.cft.template.model.response.UserResponse;
 
+@Component
 public class UserMapper {
     public static User mapRegisterBodyToUser(RegisterBody body) {
         User user = new User();

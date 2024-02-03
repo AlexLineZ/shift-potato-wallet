@@ -1,4 +1,4 @@
-package ru.cft.template.utils;
+package ru.cft.template.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

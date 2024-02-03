@@ -6,12 +6,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.cft.template.entity.User;
 import ru.cft.template.entity.Wallet;
-import ru.cft.template.exception.BadTransactionException;
 import ru.cft.template.mapper.WalletMapper;
+import ru.cft.template.model.TransactionType;
+import ru.cft.template.model.request.AmountBody;
 import ru.cft.template.model.response.WalletResponse;
+import ru.cft.template.model.response.WalletShortResponse;
 import ru.cft.template.repository.UserRepository;
 import ru.cft.template.repository.WalletRepository;
-import ru.cft.template.utils.JwtTokenUtils;
+import ru.cft.template.jwt.JwtTokenUtils;
 
 import java.util.Date;
 import java.util.UUID;

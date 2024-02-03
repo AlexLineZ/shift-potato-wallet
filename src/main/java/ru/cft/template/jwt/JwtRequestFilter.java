@@ -1,4 +1,4 @@
-package ru.cft.template.config;
+package ru.cft.template.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -15,7 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import ru.cft.template.entity.User;
 import ru.cft.template.repository.BannedTokenRepository;
 import ru.cft.template.repository.UserRepository;
-import ru.cft.template.utils.JwtTokenUtils;
+import ru.cft.template.jwt.JwtTokenUtils;
 
 import java.io.IOException;
 import java.util.Collections;
