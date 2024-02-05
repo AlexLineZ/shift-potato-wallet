@@ -1,4 +1,4 @@
-package ru.cft.template.utils;
+package ru.cft.template.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -9,10 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import ru.cft.template.entity.User;
-import ru.cft.template.repository.UserRepository;
 
 import javax.crypto.SecretKey;
 import java.time.Duration;
@@ -50,6 +48,10 @@ public class JwtTokenUtils {
     public UUID getUserIdFromToken(String token){
         String userId = getAllClaimsFromToken(token).get("userId", String.class);
         return UUID.fromString(userId);
+    }
+
+    public Date getExpirationDateFromToken(String token) {
+        return getAllClaimsFromToken(token).getExpiration();
     }
 
     private SecretKey getSignKey() {

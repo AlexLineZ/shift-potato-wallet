@@ -10,14 +10,15 @@ import ru.cft.template.mapper.WalletMapper;
 import ru.cft.template.model.response.WalletResponse;
 import ru.cft.template.repository.UserRepository;
 import ru.cft.template.repository.WalletRepository;
-import ru.cft.template.utils.JwtTokenUtils;
+import ru.cft.template.jwt.JwtTokenUtils;
+import ru.cft.template.service.WalletService;
 
 import java.util.Date;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class WalletService {
+public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
     private final UserRepository userRepository;
     private final JwtTokenUtils jwtTokenUtils;
